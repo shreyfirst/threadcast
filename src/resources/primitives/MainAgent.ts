@@ -1,9 +1,9 @@
-import { MainThread } from "./MainThread.js";
-import { Agent, type AgentConstructor } from "./resources/objects/Agent.js";
-import { Dispatcher } from "./resources/objects/Dispatcher.js";
-import type { Message } from "./resources/objects/Message.js";
-import { Storage } from "./resources/objects/Storage.js";
-import { models } from "./utils/llms/helpers.js";
+import { callTextStream } from "../../utils/llms/callTextStream.js";
+import { models } from "../../utils/llms/helpers.js";
+import { Agent, type AgentConstructor } from "./Agent.js";
+import { Dispatcher } from "./Dispatcher.js";
+import { Message } from "./Message.js";
+import { Storage } from "./Storage.js";
 
 type MainAgentOptions = {
 	mission: string;
@@ -17,25 +17,21 @@ const _MAIN_AGENT_SYSTEM_PROMPT = `You are the main agent. You are responsible f
     You are also responsible for storing the results of the other agents.`;
 
 export class MainAgent extends Agent {
+	name = "MainAgent";
 	model = models.openai.gpt41;
 	systemPrompt = _MAIN_AGENT_SYSTEM_PROMPT;
+	main = true;
 
 	mission: string;
 	agents!: Agent[];
 
 	constructor(options: MainAgentOptions) {
 		const storage = new Storage();
-		const dispatcher = new Dispatcher([]);
+		const dispatcher = new Dispatcher();
 
 		super({
 			storage: storage,
 			dispatcher: dispatcher,
-		});
-
-		this.thread = new MainThread({
-			mission: options.mission,
-			dispatcher: dispatcher,
-			onMessage: this.onMessage.bind(this),
 		});
 
 		this.mission = options.mission;
@@ -52,16 +48,17 @@ export class MainAgent extends Agent {
 		});
 
 		this.agents = agents;
-		this.dispatcher.agents = agents;
+
+		this.dispatcher.agents = [...agents];
+		this.dispatcher.mainAgent = this;
 	}
 
-	onMessage(_message: Message) {
-		// send to dispatcher to send to other LLMs
-	}
+	async start() {
+		const missionMessage = new Message({
+			content: `Mission: ${this.mission}`,
+			generator: this,
+		});
 
-	start() {
-		// need to start first message based on the mission
-		// maybe:
-		// this.thread.sendMessage(new Message({ content: this.mission, generator: this }))
+		this.thread.sendMessage(missionMessage);
 	}
 }

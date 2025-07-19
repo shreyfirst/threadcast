@@ -15,10 +15,10 @@ const tools: ToolSet = {
 	}),
 };
 
-export class QueryExecutor extends Agent {
-	name = "QueryExecutor";
+export class Planner extends Agent {
+	name = "Planner";
 	systemPrompt =
-		"You are a query executor. You are responsible for executing queries and returning the results.";
+		"You are a planner. You are responsible for planning the best things to do.";
 	model = models.openai.gpt4o;
 
 	constructor(options: AgentOptions) {

@@ -4,6 +4,7 @@ import type { Agent } from "./Agent.js";
 type MessageOptions = {
 	content: string;
 	generator: Agent;
+	metadata?: Record<string, unknown>;
 };
 
 /**
@@ -14,16 +15,22 @@ export class Message {
 	content: string;
 	createdAt: Date;
 	generator: Agent;
+	metadata: Record<string, unknown>;
 
 	constructor(options: MessageOptions) {
 		this.id = crypto.randomUUID();
 		this.content = options.content;
 		this.createdAt = new Date();
 		this.generator = options.generator;
+		this.metadata = options.metadata || {};
 	}
 
 	toText() {
-		return `${this.generator.name}: ${this.content}`;
+		return `${this.generator.name}: ${this.content}${
+			Object.keys(this.metadata).length > 0
+				? `\nMetadata: ${JSON.stringify(this.metadata, null, 2)}`
+				: ""
+		}`;
 	}
 
 	/**
