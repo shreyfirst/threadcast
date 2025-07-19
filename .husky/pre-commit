@@ -1,0 +1,2 @@
+pnpm exec biome lint --fix
+git add -A

@@ -1,0 +1,24 @@
+{
+	"name": "threadcast",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.12.2",
+	"devDependencies": {
+		"@types/node": "^24.0.15",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"@biomejs/biome": "^2.1.2",
+		"@openrouter/ai-sdk-provider": "1.0.0-beta.2",
+		"ai": "^4.3.19",
+		"zod": "^3.23.8"
+	}
+}
